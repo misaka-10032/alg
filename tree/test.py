@@ -5,12 +5,13 @@ All rights reserved.
 
 Test cases for tree package. Uses nose2.
 """
-__author__ = 'misaka-10032'
 
 import numpy as np
 from . import BsTree
 from . import AvlTree
-from . import RbTree, RbNode
+from . import RbTree
+import base
+import rb
 
 
 def _test_bst_node(node):
@@ -30,10 +31,10 @@ def _test_bst(tree):
     """ test insert """
     for x in a:
         tree.insert(x)
-    tree.traverse(order=tree.ORDER_IN, func=_test_bst_node)
+    tree.traverse(order=base.ORDER_IN, func=_test_bst_node)
     c = []
     t2l = lambda node: c.append(node.key)
-    tree.traverse(order=tree.ORDER_IN, func=t2l)
+    tree.traverse(order=base.ORDER_IN, func=t2l)
     assert b == c
     """ test delete """
     d = np.random.choice(b, 10, replace=False).tolist()
@@ -42,7 +43,7 @@ def _test_bst(tree):
         tree.remove(x)
     c = []
     t2l = lambda node: c.append(node.key)
-    tree.traverse(order=tree.ORDER_IN, func=t2l)
+    tree.traverse(order=base.ORDER_IN, func=t2l)
     assert b == c
     return tree
 
@@ -59,18 +60,41 @@ def _test_avl_node(node):
 def test_avl():
     tree = _test_bst(AvlTree())
     """ test avl property """
-    tree.traverse(order=tree.ORDER_IN, func=_test_avl_node)
+    tree.traverse(order=base.ORDER_IN, func=_test_avl_node)
 
 
 def _test_rb_node(node):
-    if node.color == RbNode.RED and node.parent:
-        assert node.parent.color == RbNode.BLACK, \
+    # check red has black parent
+    if node.color == 'r' and node.parent:
+        assert node.parent.color == 'b', \
         'node\n%s\nshould have a black parent' % node
-    # TODO: check same # of black's in the path down.
+
+    # check same # of black's in the path down.
+    # left height
+    if not node.left:
+        h_left = 1
+    else:
+        if node.left.color == rb.BLACK:
+            h_left = 1 + node.left.val
+        else:
+            h_left = node.left.val
+    # right height
+    if not node.right:
+        h_right = 1
+    else:
+        if node.right.color == rb.BLACK:
+            h_right = 1 + node.right.val
+        else:
+            h_right = node.right.val
+    # assert left height == right height
+    assert h_left == h_right, \
+        'h_left({}) != h_right({}) for node\n{}'.format(
+            h_left, h_right, node)
+    node.val = h_left
 
 
-# TODO
-# def test_rb():
-#     tree = _test_bst(RbTree(debug=True))
-#     """ test rb property """
-#     tree.traverse(order=tree.ORDER_IN, func=_test_rb_node)
+def test_rb():
+    tree = _test_bst(RbTree())
+    """ test rb property """
+    assert tree.root.color == rb.BLACK
+    tree.traverse(order=base.ORDER_POST, func=_test_rb_node)

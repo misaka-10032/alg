@@ -5,9 +5,12 @@ All rights reserved.
 
 Base classes for trees.
 """
-__author__ = 'misaka-10032'
 
 from ..common import Node, print_node
+
+ORDER_PRE = 'pre'
+ORDER_IN = 'in'
+ORDER_POST = 'post'
 
 
 class BinNode(Node):
@@ -20,21 +23,17 @@ class BinNode(Node):
 
 
 class BinTree(object):
-    ORDER_PRE = 'pre'
-    ORDER_IN = 'in'
-    ORDER_POST = 'post'
-
     def __init__(self, node=None, debug=False):
         self.root = node
         self.debug = debug
 
     def traverse(self, order=ORDER_IN, node=None, func=print_node):
         start = node or self.root
-        if order == self.ORDER_PRE:
+        if order == ORDER_PRE:
             self._traverse_pre(start, func)
-        elif order == self.ORDER_IN:
+        elif order == ORDER_IN:
             self._traverse_in(start, func)
-        elif order == self.ORDER_POST:
+        elif order == ORDER_POST:
             self._traverse_post(start, func)
         else:
             raise Exception("""Order should be one of the following:
@@ -64,19 +63,19 @@ class BinTree(object):
             return
         self._traverse_post(node.left, func)
         self._traverse_post(node.right, func)
-
-        func(node)
+        if func:
+            func(node)
 
     @classmethod
     def _pretty_str(cls, node):
-        if node is None:
+        if not node:
             return [], 0, 0
         label = node._pretty_str()
-        if node.left is None:
+        if not node.left:
             left_lines, left_pos, left_width = [], 0, 0
         else:
             left_lines, left_pos, left_width = cls._pretty_str(node.left)
-        if node.right is None:
+        if not node.right:
             right_lines, right_pos, right_width = [], 0, 0
         else:
             right_lines, right_pos, right_width = cls._pretty_str(node.right)
@@ -213,7 +212,7 @@ class BsTree(BinTree):
         y.left = x
         x.parent = y
         x.right = B
-        if B:
+        if B is not None:
             B.parent = x
 
         if self.debug:
@@ -255,7 +254,7 @@ class BsTree(BinTree):
         x.right = y
         y.parent = x
         y.left = B
-        if B:
+        if B is not None:
             B.parent = y
 
         if self.debug:
@@ -300,8 +299,6 @@ class BsTree(BinTree):
         """ Insert node. """
         ret = node
         node.parent = parent
-        node.left = None
-        node.right = None
         if not parent:
             self.root = node
         elif node.key < parent.key:
@@ -325,7 +322,7 @@ class BsTree(BinTree):
     def __setitem__(self, key, value):
         self.insert(BinNode(key, value), update=True)
 
-    def _transplant(self, old, new, carry):
+    def _transplant(self, old, new, carry=True):
         """
         Transplant the old node with new node.
         :param old:
@@ -348,8 +345,11 @@ class BsTree(BinTree):
             old.parent.left = new
         else:
             old.parent.right = new
-        if new:
+
+        # tricky: can also set parent for NilNode
+        if new is not None:
             new.parent = old.parent
+
         if new and not carry:
             if new is not old.left:
                 new.left = old.left

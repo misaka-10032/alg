@@ -4,21 +4,32 @@ Created by misaka-10032 (longqic@andrew.cmu.edu).
 All rights reserved.
 
 Red-black tree.
-TODO: !!!!!!buggy!!!!!!!
 """
-__author__ = 'misaka-10032'
 
 from . import BsTree, BinNode
 
+RED = 'r'
+BLACK = 'b'
+
+
+class NilNode(BinNode):
+    def __init__(self, parent):
+        super(NilNode, self).__init__(None, None, None, None, parent)
+        self.color = BLACK
+
+    def __nonzero__(self):
+        return False
+
 
 class RbNode(BinNode):
-    RED = 'r'
-    BLACK = 'b'
-
     def __init__(self, key=None, value=None, color=RED,
                  left=None, right=None, parent=None):
         super(RbNode, self).__init__(key, value, left, right, parent)
         self.color = color
+        if left is None:
+            self.left = NilNode(self)
+        if right is None:
+            self.right = NilNode(self)
 
     def _pretty_str(self):
         return '%s(%s)' % (self.key, self.color)
@@ -31,13 +42,10 @@ class RbNode(BinNode):
 class RbTree(BsTree):
     def _balance_insert(self, node):
         z = node
-        RED = RbNode.RED
-        BLACK = RbNode.BLACK
-
         while z and z.parent and z.parent.parent and z.parent.color == RED:
             if z.parent is z.parent.parent.left:
                 y = z.parent.parent.right
-                if y and y.color == RED:        # case 1
+                if y.color == RED:        # case 1
                     z.parent.color = BLACK
                     y.color = BLACK
                     z.parent.parent.color = RED
@@ -51,7 +59,7 @@ class RbTree(BsTree):
                     self._right_rotate(z.parent.parent)
             else:
                 y = z.parent.parent.left
-                if y and y.color == RED:
+                if y.color == RED:
                     z.parent.color = BLACK
                     y.color = BLACK
                     z.parent.parent.color = RED
@@ -70,6 +78,7 @@ class RbTree(BsTree):
         Insert node into tree.
         :param node:
         :type node: RbNode
+        :param update: if key is found, do we update its val?
         :return:
         """
         if not isinstance(node, RbNode):
@@ -88,15 +97,8 @@ class RbTree(BsTree):
     def __setitem__(self, key, value):
         self.insert(RbNode(key, value), update=True)
 
-    @classmethod
-    def _color(cls, node):
-        return node.color if node else RbNode.BLACK
-
     def _balance_remove(self, node):
         x = node
-        RED = RbNode.RED
-        BLACK = RbNode.BLACK
-
         while x is not self.root and x.color == BLACK:
             if not x.parent:
                 break
@@ -107,12 +109,12 @@ class RbTree(BsTree):
                     x.parent.color = RED
                     self._left_rotate(x.parent)
                     w = x.parent.right
-                if self._color(w.left) == BLACK and \
-                   self._color(w.right) == BLACK:
+                if w.left.color == BLACK and \
+                   w.right.color == BLACK:
                     w.color = RED
                     x = x.parent
                 else:
-                    if self._color(w.right) == BLACK:
+                    if w.right.color == BLACK:
                         if w.left:
                             w.left.color = BLACK
                         w.color = RED
@@ -131,12 +133,12 @@ class RbTree(BsTree):
                     x.parent.color = RED
                     self._right_rotate(x.parent)
                     w = x.parent.left
-                if self._color(w.right) == BLACK and \
-                   self._color(w.left) == BLACK:
+                if w.right.color == BLACK and \
+                   w.left.color == BLACK:
                     w.color = RED
                     x = x.parent
                 else:
-                    if self._color(w.left) == BLACK:
+                    if w.left.color == BLACK:
                         if w.right:
                             w.right.color = BLACK
                         w.color = RED
@@ -150,36 +152,6 @@ class RbTree(BsTree):
                     x = self.root
         x.color = BLACK
 
-    def _remove(self, node, strategy):
-        """
-        Internal remove. Unbalance point is a bit different.
-        :param node:
-        :type node: BinNode
-        :param strategy:
-        :return ubp: the probable unbalanced point caused by deletion.
-        """
-        if not node:
-            return
-        if not node.left:
-            self._transplant(node, node.right, True)
-            return node
-        if not node.right:
-            self._transplant(node, node.left, True)
-            return node
-
-        if strategy == 'r':
-            _min = self.min(node.right)
-            _min = self._transplant(_min, _min.right, True)
-            ubp = _min.parent if _min.parent is not node else _min
-            self._transplant(node, _min, False)
-            return ubp
-        else:
-            _max = self.max(node.left)
-            _max = self._transplant(_max, _max.left, True)
-            ubp = _max.parent if _max.parent is not node else _max
-            self._transplant(node, _max, False)
-            return ubp
-
     def remove(self, node, strategy='r'):
         if not isinstance(node, RbNode):
             node = self.search(node)
@@ -192,14 +164,34 @@ class RbTree(BsTree):
             print self
 
         old_color = node.color
-        ubp = self._remove(node, strategy)
-        """ :type: RbNode """
-        if old_color == RbNode.BLACK:
-            self._balance_remove(ubp)
+        y = z = node
+        if not z.left:
+            x = z.right
+            self._transplant(z, z.right)
+        elif not z.right:
+            x = z.left
+            self._transplant(z, z.left)
+        else:
+            y = self.min(z.right)
+            old_color = y.color
+            x = y.right
+            if y.parent is z:
+                x.parent = y
+            else:
+                self._transplant(y, y.right)
+                y.right = z.right
+                y.right.parent = y
+            self._transplant(z, y)
+            y.left = z.left
+            y.left.parent = y
+            y.color = z.color
+
+        if old_color == BLACK:
+            self._balance_remove(x)
 
         if self.debug:
             print 'Unbalanced point was:'
-            print ubp
+            print x
             print 'After balancing:'
             print self
             print '*' * 20
