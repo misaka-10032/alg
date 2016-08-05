@@ -5,7 +5,6 @@ All rights reserved.
 
 Hash related string matching.
 """
-__author__ = 'misaka-10032'
 
 import random
 from base import RollingHash

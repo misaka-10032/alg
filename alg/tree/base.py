@@ -8,10 +8,6 @@ Base classes for trees.
 
 from ..common import Node, print_node
 
-ORDER_PRE = 'pre'
-ORDER_IN = 'in'
-ORDER_POST = 'post'
-
 
 class BinNode(Node):
     def __init__(self, key, value=None,
@@ -23,17 +19,21 @@ class BinNode(Node):
 
 
 class BinTree(object):
+    ORDER_PRE = 'pre'
+    ORDER_IN = 'in'
+    ORDER_POST = 'post'
+
     def __init__(self, node=None, debug=False):
         self.root = node
         self.debug = debug
 
     def traverse(self, order=ORDER_IN, node=None, func=print_node):
         start = node or self.root
-        if order == ORDER_PRE:
+        if order == self.ORDER_PRE:
             self._traverse_pre(start, func)
-        elif order == ORDER_IN:
+        elif order == self.ORDER_IN:
             self._traverse_in(start, func)
-        elif order == ORDER_POST:
+        elif order == self.ORDER_POST:
             self._traverse_post(start, func)
         else:
             raise Exception("""Order should be one of the following:

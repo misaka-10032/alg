@@ -5,10 +5,9 @@ All rights reserved.
 
 Unit test for heaps.
 """
-__author__ = 'misaka-10032'
 
 import numpy as np
-from . import MinHeap, MaxHeap, MedHeap
+from alg.heap import MinHeap, MaxHeap, MedHeap
 
 
 def test_min_heap():

@@ -5,9 +5,8 @@ All rights reserved.
 
 Tests for graph.
 """
-__author__ = 'misaka-10032'
 
-from . import Graph, Edge
+from alg.graph import Graph, Edge
 
 
 def test_traverse():

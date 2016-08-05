@@ -5,7 +5,6 @@ All rights reserved.
 
 Find kth smallest using random pivot.
 """
-__author__ = 'misaka-10032'
 
 import random
 

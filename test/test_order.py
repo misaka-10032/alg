@@ -5,10 +5,9 @@ All rights reserved.
 
 Test cases for order statistics
 """
-__author__ = 'misaka-10032'
 
 import numpy as np
-from pivot import find_kth, random_pivot, rough_median_pivot
+from alg.order.pivot import find_kth, random_pivot, rough_median_pivot
 
 
 def test_random_pivot():

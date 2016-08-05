@@ -5,7 +5,6 @@ All rights reserved.
 
 Base classes.
 """
-__author__ = 'misaka-10032'
 
 
 class Node(object):

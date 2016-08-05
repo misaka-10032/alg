@@ -5,7 +5,6 @@ All rights reserved.
 
 Implements Dict. Support dynamic table with default threshold 2./3.
 """
-__author__ = 'misaka-10032'
 
 from ..common import Node
 from base import MulHash

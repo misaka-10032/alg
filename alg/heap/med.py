@@ -6,7 +6,6 @@ All rights reserved.
 Median heap
 http://stackoverflow.com/a/10657732/3663161
 """
-__author__ = 'misaka-10032'
 
 from base import Node
 from min import MinHeap

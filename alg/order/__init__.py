@@ -5,4 +5,3 @@ All rights reserved.
 
 Package for order statistics.
 """
-__author__ = 'misaka-10032'

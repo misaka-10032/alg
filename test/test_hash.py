@@ -5,10 +5,9 @@ All rights reserved.
 
 Unit tests.
 """
-__author__ = 'misaka-10032'
 
-from . import Dict
-from . import rabin_karp
+from alg.hash import Dict
+from alg.hash import rabin_karp
 
 
 def test_dict():

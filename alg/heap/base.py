@@ -5,7 +5,6 @@ All rights reserved.
 
 Base classes for heaps
 """
-__author__ = 'misaka-10032'
 
 from ..common import Node
 

@@ -5,7 +5,6 @@ All rights reserved.
 
 MaxHeap.
 """
-__author__ = 'misaka-10032'
 
 from base import Heap
 

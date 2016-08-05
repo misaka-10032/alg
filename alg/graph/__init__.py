@@ -5,7 +5,5 @@ All rights reserved.
 
 Package for graph.
 """
-__author__ = 'misaka-10032'
-
 
 from base import Graph, Vertex, Edge

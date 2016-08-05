@@ -7,11 +7,8 @@ Test cases for tree package. Uses nose2.
 """
 
 import numpy as np
-from . import BsTree
-from . import AvlTree
-from . import RbTree
-import base
-import rb
+from alg.tree import rb
+from alg.tree import BsTree, AvlTree, RbTree
 
 
 def _test_bst_node(node):
@@ -31,10 +28,10 @@ def _test_bst(tree):
     """ test insert """
     for x in a:
         tree.insert(x)
-    tree.traverse(order=base.ORDER_IN, func=_test_bst_node)
+    tree.traverse(order=tree.ORDER_IN, func=_test_bst_node)
     c = []
     t2l = lambda node: c.append(node.key)
-    tree.traverse(order=base.ORDER_IN, func=t2l)
+    tree.traverse(order=tree.ORDER_IN, func=t2l)
     assert b == c
     """ test delete """
     d = np.random.choice(b, 10, replace=False).tolist()
@@ -43,7 +40,7 @@ def _test_bst(tree):
         tree.remove(x)
     c = []
     t2l = lambda node: c.append(node.key)
-    tree.traverse(order=base.ORDER_IN, func=t2l)
+    tree.traverse(order=tree.ORDER_IN, func=t2l)
     assert b == c
     return tree
 
@@ -60,7 +57,7 @@ def _test_avl_node(node):
 def test_avl():
     tree = _test_bst(AvlTree())
     """ test avl property """
-    tree.traverse(order=base.ORDER_IN, func=_test_avl_node)
+    tree.traverse(order=tree.ORDER_IN, func=_test_avl_node)
 
 
 def _test_rb_node(node):
@@ -97,4 +94,4 @@ def test_rb():
     tree = _test_bst(RbTree())
     """ test rb property """
     assert tree.root.color == rb.BLACK
-    tree.traverse(order=base.ORDER_POST, func=_test_rb_node)
+    tree.traverse(order=tree.ORDER_POST, func=_test_rb_node)

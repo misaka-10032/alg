@@ -5,7 +5,6 @@ All rights reserved.
 
 Hash functions
 """
-__author__ = 'misaka-10032'
 
 import random
 import math

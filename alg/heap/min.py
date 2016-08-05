@@ -5,7 +5,6 @@ All rights reserved.
 
 MinHeap.
 """
-__author__ = 'misaka-10032'
 
 from base import Heap
 
