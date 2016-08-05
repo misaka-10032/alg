@@ -5,8 +5,8 @@ All rights reserved.
 
 Base classes for graph.
 """
-__author__ = 'misaka-10032'
 
+import numpy as np
 from ..common import Node, print_node
 from collections import deque
 
@@ -29,6 +29,11 @@ class Vertex(Node):
 
 class Edge(object):
     def __init__(self, start, end, weight=None):
+        """
+        :param start: start vertex (u)
+        :param end: end vertex (v)
+        :param weight: can be anything that impls __cmp__
+        """
         self.start = start if isinstance(start, Vertex) else Vertex(start)
         self.end = end if isinstance(end, Vertex) else Vertex(end)
         self.weight = weight or 1
@@ -48,12 +53,13 @@ class Graph(object):
     ORDER_BFS = 'bfs'
     ORDER_DFS = 'dfs'
 
-    def __init__(self):
+    def __init__(self, V=None, E=None):
         """ Constructor """
-        """ Dict V's to avoid duplicate vertices. """
-        self.V = {}
-        """ Graph is dict of list. """
-        self.E = {}
+        """ V is dict with both key and val as vertex """
+        # It's designed to be dict for fast lookup by key.
+        self.V = V or {}
+        """ E is dict with vertex as key and list of edges as val. """
+        self.E = E or {}
 
     def clear(self):
         """ Clear the graph """
@@ -73,7 +79,7 @@ class Graph(object):
         else:
             return None
 
-    def insert_vertex(self, vertex):
+    def add_vertex(self, vertex):
         """
         Insert a vertex if not exists. Otherwise return the existing one.
         :param vertex:
@@ -98,15 +104,15 @@ class Graph(object):
         else:
             return None, None
 
-    def insert_edge(self, edge):
+    def add_edge(self, edge):
         """
         Insert an edge. Duplicate edge may lead to weird behavior.
         :param edge:
         :type edge: Edge
         :return:
         """
-        edge.start = self.insert_vertex(edge.start)
-        edge.end = self.insert_vertex(edge.end)
+        edge.start = self.add_vertex(edge.start)
+        edge.end = self.add_vertex(edge.end)
         self.E[edge.start].append(edge)
         return edge
 
@@ -256,13 +262,12 @@ class Graph(object):
         return ret
 
     def sptree(self, order=ORDER_BFS):
-        V = self.V
-        E = {}
-        for vertex in V:
-            E[vertex] = []
+        tree = Graph(self.V, {})
+        for vertex in tree.V:
+            tree.E[vertex] = []
         self.traverse(order=order, func_in=None,
-                      func_edge=lambda edge: E[edge.start].append(edge.end))
-        return V, E
+                      func_edge=lambda edge: tree.add_edge(edge))
+        return tree
 
     def topological(self):
         order = []
@@ -272,3 +277,28 @@ class Graph(object):
             raise Exception("Graph is cyclic!")
         order.reverse()
         return order
+
+    def _relax(self, d, p, edge):
+        if d[edge.start] + edge.weight < d[edge.end]:
+            d[edge.end] = d[edge.start] + edge.weight
+            p[edge.end] = edge.start
+
+    def dijkstra(self, src):
+        """ Returns d[V], p[V], which are distances and predecessors """
+        src = self.search_vertex(src)
+        # check non-negative weights
+        for u, edges in self.E.iteritems():
+            for e in edges:
+                assert e.weight >= 0
+        d, p = {}, {}
+        for v in self.V.keys():
+            d[v] = np.inf
+            p[v] = None
+        d[src] = 0
+        S, R = set(), set(self.V.keys())
+        while R:
+            u = min(R, key=lambda v: d[v])
+            S.add(u); R.remove(u)
+            for e in self.E[u]:
+                self._relax(d, p, e)
+        return d, p

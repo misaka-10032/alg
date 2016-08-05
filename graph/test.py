@@ -12,12 +12,12 @@ from . import Graph, Edge
 
 def test_traverse():
     g = Graph()
-    g.insert_edge(Edge(1, 2))
-    g.insert_edge(Edge(1, 3))
-    g.insert_edge(Edge(2, 4))
-    g.insert_edge(Edge(2, 5))
-    g.insert_edge(Edge(5, 3))
-    g.insert_vertex(6)
+    g.add_edge(Edge(1, 2))
+    g.add_edge(Edge(1, 3))
+    g.add_edge(Edge(2, 4))
+    g.add_edge(Edge(2, 5))
+    g.add_edge(Edge(5, 3))
+    g.add_vertex(6)
     """ Test bfs """
     trace = []
     g.bfs(1, func_in=lambda vertex: trace.append(vertex))
@@ -31,11 +31,33 @@ def test_traverse():
     g.traverse(order=g.ORDER_BFS, func_in=lambda vertex: trace.append(vertex))
     assert trace == [1, 2, 3, 4, 5, 6]
     """ Test cyclic """
-    g.insert_edge(Edge(3, 2))
+    g.add_edge(Edge(3, 2))
     assert g.cyclic()
     """ Test acyclic """
     g.remove_edge(Edge(3, 2))
     assert not g.cyclic()
     """ Test topological sort """
     assert g.topological() == [6, 1, 2, 5, 3, 4]
-    # TODO: test sptree
+    """ Test sptree """
+    assert not g.sptree().cyclic()
+
+
+def test_djkstra():
+    # CLRS(2009) p659
+    g = Graph()
+    g.add_edge(Edge('s', 't', 10))
+    g.add_edge(Edge('s', 'y', 5))
+    g.add_edge(Edge('t', 'y', 2))
+    g.add_edge(Edge('t', 'x', 1))
+    g.add_edge(Edge('x', 'z', 4))
+    g.add_edge(Edge('z', 'x', 6))
+    g.add_edge(Edge('z', 's', 7))
+    g.add_edge(Edge('y', 't', 3))
+    g.add_edge(Edge('y', 'x', 9))
+    g.add_edge(Edge('y', 'z', 2))
+    d, p = g.dijkstra('s')
+    assert d['s'] == 0 and p['s'] is None
+    assert d['t'] == 8 and p['t'] == 'y'
+    assert d['x'] == 9 and p['x'] == 't'
+    assert d['z'] == 7 and p['z'] == 'y'
+    assert d['y'] == 5 and p['y'] == 's'
