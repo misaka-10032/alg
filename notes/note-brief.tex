@@ -612,11 +612,35 @@
 \begin{itemize}
 \item Single source shortest path
 \item Do NOT allow negative weights
+\item Outputs
+  \begin{itemize}
+  \item $d[v]$: shortest distance from source to $v$.
+  \item $p[v]$: parent of $v$ in the shortest path.
+  \end{itemize}
 \item Dynamic programming
   \begin{itemize}
   \item $S$ is safe set, within which have been reached by shortest path from source.
   \item $R$ is the remaining set.
   \end{itemize}
+\item Optimize
+  \begin{itemize}
+  \item Maintain $d$ as priority queue, so that each time \textit{EXTRACT-MIN} only takes $O(\log|V|)$
+  \item Total complexity: $O(|E|+|V|\log|V|)$
+  \end{itemize}
+\end{itemize}
+
+%%%%
+
+\subsection{Bellman-Ford}
+\begin{itemize}
+\item Single source shortest path that allows negative weights.
+\item Mark $d[v]=-\text{inf}$ to indicate negative cycle.
+\item Algorithm
+  \begin{itemize}
+  \item Relax ALL edges for $|V|-1$ passes.
+  \item Relax one more time to check negative cycle.
+  \end{itemize}
+\item Complexity $O(|V||E|)$.
 \end{itemize}
 
 %%%%%%%%

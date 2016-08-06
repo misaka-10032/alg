@@ -7,7 +7,7 @@ Base classes for graph.
 """
 
 import numpy as np
-from ..common import Node, print_node
+from ..core import Node, print_node
 from collections import deque
 
 
@@ -282,6 +282,9 @@ class Graph(object):
         if d[edge.start] + edge.weight < d[edge.end]:
             d[edge.end] = d[edge.start] + edge.weight
             p[edge.end] = edge.start
+            return True
+        else:
+            return False
 
     def dijkstra(self, src):
         """ Returns d[V], p[V], which are distances and predecessors """
@@ -301,4 +304,22 @@ class Graph(object):
             S.add(u); R.remove(u)
             for e in self.E[u]:
                 self._relax(d, p, e)
+        return d, p
+
+    def bellmanford(self, src):
+        src = self.search_vertex(src)
+        d, p = {}, {}
+        for v in self.V.keys():
+            d[v] = np.inf
+            p[v] = None
+        d[src] = 0
+        for _ in xrange(len(self.V)-1):
+            for edges in self.E.itervalues():
+                for e in edges:
+                    self._relax(d, p, e)
+        for _ in xrange(len(self.V)):
+            for edges in self.E.itervalues():
+                for e in edges:
+                    if self._relax(d, p, e):
+                        d[e.end] = -np.inf
         return d, p

@@ -3,16 +3,25 @@
 Created by misaka-10032 (longqic@andrew.cmu.edu).
 All rights reserved.
 
-Base classes for heaps
+Base classes for heaps, aka priority queue.
+Element is Node, whose key is taken as priority.
 """
 
-from ..common import Node
+from ..core import Node
 
 
 class Heap(object):
-    def __init__(self, _list=None, debug=False):
-        _list = _list or []
-        self.L = map(lambda x: x if isinstance(x, Node) else Node(x), _list)
+    def __init__(self, list_=None, modifiable=False, debug=False):
+        """
+        :param list_: build a heap from list if passed in
+        :param modifiable: support remove/update?
+        :param debug: Print debug message
+        """
+        list_ = list_ or []
+        self.L = map(lambda x: x if isinstance(x, Node) else Node(x), list_)
+        self.modifiable = modifiable
+        if modifiable:
+            self.nid2idx = {id(node): idx for idx, node in enumerate(self.L)}
         self.debug = debug
         if len(self.L) > 0:
             self._build()
@@ -22,7 +31,7 @@ class Heap(object):
 
     def _build(self):
         for i in xrange(len(self.L)/2, -1, -1):
-            self._heapify(i)
+            self._sift_down(i)
 
     def _left(self, idx):
         i = idx * 2 + 1
@@ -36,23 +45,63 @@ class Heap(object):
         i = (idx - 1) // 2
         return (i, self.L[i]) if i >= 0 else (None, None)
 
-    def _heapify(self, idx):
+    def _sift_down(self, idx):
+        old = self.L[idx]
+        if self.debug:
+            print 'Before sifting down', old
+            print self
+
         tid, this = idx, self.L[idx]
         while True:
             lid, left = self._left(tid)
             rid, right = self._right(tid)
             best = self._best(this, left, right)
             if left and best is left:
+                if self.modifiable:
+                    self.nid2idx[id(left)] = tid
+                    self.nid2idx[id(this)] = lid
                 self.L[tid] = left
                 self.L[lid] = this
                 tid = lid
                 continue
             elif right and best is right:
+                if self.modifiable:
+                    self.nid2idx[id(right)] = tid
+                    self.nid2idx[id(this)] = rid
                 self.L[tid] = right
                 self.L[rid] = this
                 tid = rid
                 continue
             break
+
+        if self.debug:
+            print 'After sifting down', old
+            print self
+
+    def _bubble_up(self, idx):
+        old = self.L[idx]
+        if self.debug:
+            print 'Before bubbling up', old
+            print self
+
+        tid, this = idx, self.L[idx]
+        while True:
+            pid, parent = self._parent(tid)
+            best = self._best(this, parent)
+
+            if parent and best is this:
+                if self.modifiable:
+                    self.nid2idx[id(parent)] = tid
+                    self.nid2idx[id(this)] = pid
+                self.L[tid] = parent
+                self.L[pid] = this
+                tid = pid
+                continue
+            break
+
+        if self.debug:
+            print 'After bubbling up', old
+            print self
 
     def insert(self, node):
         if not isinstance(node, Node):
@@ -68,6 +117,8 @@ class Heap(object):
 
         tid, this = len(self.L), node
         self.L.append(node)
+        if self.modifiable:
+            self.nid2idx[id(this)] = tid
         pid, parent = self._parent(tid)
         while parent:
             best = self._best(parent, this)
@@ -96,9 +147,13 @@ class Heap(object):
 
         ret = self.L[0]
         self.L[0] = self.L[-1]
-        self.L.pop()
+        popped = self.L.pop()
+        if self.modifiable:
+            self.nid2idx.pop(id(popped))
         if len(self.L) > 0:
-            self._heapify(0)
+            if self.modifiable:
+                self.nid2idx[id(self.L[0])] = 0
+            self._sift_down(0)
 
         if self.debug:
             print 'After popping:'
@@ -109,11 +164,34 @@ class Heap(object):
     def peek(self):
         return self.L[0] if self else None
 
-    def __nonzero__(self):
-        return len(self.L) > 0
-
     def size(self):
         return len(self.L)
+
+    def remove(self, node):
+        if not self.modifiable:
+            raise NotImplementedError(
+                'The heap must be editable, see constructor.')
+        idx = self.nid2idx[id(node)]
+        self.nid2idx.pop(id(node))
+        last = self.L.pop()
+
+        if node is not last:
+            self.L[idx] = last
+            self.nid2idx[id(last)] = idx
+            self._sift_down(idx)
+            self._bubble_up(idx)
+
+    def update(self, node, newkey):
+        if not self.modifiable:
+            raise NotImplementedError(
+                'The heap must be editable, see constructor.')
+        idx = self.nid2idx[id(node)]
+        node.key = newkey
+        self._sift_down(idx)
+        self._bubble_up(idx)
+
+    def __nonzero__(self):
+        return len(self.L) > 0
 
     def _pretty_str(self, idx):
         if idx < 0 or not self:

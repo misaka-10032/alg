@@ -6,7 +6,7 @@ All rights reserved.
 Implements Dict. Support dynamic table with default threshold 2./3.
 """
 
-from ..common import Node
+from ..core import Node
 from base import MulHash
 
 

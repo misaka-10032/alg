@@ -6,7 +6,7 @@ All rights reserved.
 Base classes for trees.
 """
 
-from ..common import Node, print_node
+from ..core import Node, print_node
 
 
 class BinNode(Node):
