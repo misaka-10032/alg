@@ -7,9 +7,7 @@ Median heap
 http://stackoverflow.com/a/10657732/3663161
 """
 
-from base import Node
-from min import MinHeap
-from max import MaxHeap
+from core import Node, MinHeap, MaxHeap
 
 
 class MedHeap(object):

@@ -6,6 +6,6 @@ All rights reserved.
 Package for trees.
 """
 
-from base import BsTree, BinNode
+from core import BsTree, BinNode
 from avl import AvlTree, AvlNode
 from rb import RbTree, RbNode

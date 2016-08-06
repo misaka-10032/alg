@@ -7,7 +7,7 @@ Implements Dict. Support dynamic table with default threshold 2./3.
 """
 
 from ..core import Node
-from base import MulHash
+from core import MulHash
 
 
 class DictNode(Node):

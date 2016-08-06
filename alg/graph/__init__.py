@@ -6,4 +6,4 @@ All rights reserved.
 Package for graph.
 """
 
-from base import Graph, Vertex, Edge
+from core import Graph, Vertex, Edge

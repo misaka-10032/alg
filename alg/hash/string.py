@@ -7,7 +7,7 @@ Hash related string matching.
 """
 
 import random
-from base import RollingHash
+from core import RollingHash
 from primes import primes
 
 

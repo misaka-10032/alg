@@ -7,8 +7,9 @@ Base classes for graph.
 """
 
 import numpy as np
-from ..core import Node, print_node
 from collections import deque
+from ..core import Node, print_node
+from ..heap import MinHeap
 
 
 class Vertex(Node):
@@ -298,12 +299,17 @@ class Graph(object):
             d[v] = np.inf
             p[v] = None
         d[src] = 0
-        S, R = set(), set(self.V.keys())
+        S = set()
+
+        # maps from vertex to heap_node
+        hnodes = {v: Node(d[v], v) for v in self.V.keys()}
+        R = MinHeap(hnodes.values(), modifiable=True)
         while R:
-            u = min(R, key=lambda v: d[v])
-            S.add(u); R.remove(u)
+            u = R.pop().value
+            S.add(u)
             for e in self.E[u]:
-                self._relax(d, p, e)
+                if self._relax(d, p, e):
+                    R.update(hnodes[e.end], d[e.end])
         return d, p
 
     def bellmanford(self, src):

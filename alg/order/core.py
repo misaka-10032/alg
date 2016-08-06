@@ -86,12 +86,18 @@ def _find_kth(a, p, q, k, pivot_idx):
         return pivot
 
 
-def find_kth(a, k, pivot_idx=random_pivot):
+def find_kth(a, k, pivot):
     """
     Find kth smalles in a
     :param a:
     :param k:
-    :param pivot_idx: callable(a, p, q), return pivot_idx within [p, q)
+    :param pivot: either 'random' or 'median'
     :return:
     """
+    if pivot == 'random':
+        pivot_idx = random_pivot
+    elif pivot == 'median':
+        pivot_idx = rough_median_pivot
+    else:
+        raise NotImplementedError('Pivot type not supported!')
     return _find_kth(a, 0, len(a), k, pivot_idx)

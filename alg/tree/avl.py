@@ -6,7 +6,7 @@ All rights reserved.
 AvlTree.
 """
 
-from base import (BsTree, BinNode)
+from core import (BsTree, BinNode)
 
 
 class AvlNode(BinNode):

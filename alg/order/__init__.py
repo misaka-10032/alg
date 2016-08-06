@@ -5,3 +5,5 @@ All rights reserved.
 
 Package for order statistics.
 """
+
+from core import find_kth

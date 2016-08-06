@@ -5,6 +5,11 @@ All rights reserved.
 
 Base classes for heaps, aka priority queue.
 Element is Node, whose key is taken as priority.
+
+Heap can be "modifiable" if triggered on. By doing this,
+user can remove node in the middle or update its priority.
+To use this feature, user is responsible to keep track of
+the exact nodes he wants to remove/update, e.g. with a dict.
 """
 
 from ..core import Node
@@ -170,7 +175,7 @@ class Heap(object):
     def remove(self, node):
         if not self.modifiable:
             raise NotImplementedError(
-                'The heap must be editable, see constructor.')
+                'The heap must be modifiable, see constructor.')
         idx = self.nid2idx[id(node)]
         self.nid2idx.pop(id(node))
         last = self.L.pop()
@@ -184,7 +189,7 @@ class Heap(object):
     def update(self, node, newkey):
         if not self.modifiable:
             raise NotImplementedError(
-                'The heap must be editable, see constructor.')
+                'The heap must be modifiable, see constructor.')
         idx = self.nid2idx[id(node)]
         node.key = newkey
         self._sift_down(idx)
@@ -244,3 +249,13 @@ class Heap(object):
 
     def __repr__(self):
         return self.pretty_str()
+
+
+class MinHeap(Heap):
+    def _best(self, *args):
+        return min(filter(lambda x: x, args))
+
+
+class MaxHeap(Heap):
+    def _best(self, *args):
+        return max(filter(lambda x: x, args))
