@@ -40,6 +40,9 @@ class RollingHash(object):
         self.pos = winsz
 
     def roll(self):
+        if self.pos == len(self.text):
+            self.pos += 1
+            return
         self.rh -= ord(self.text[self.pos - self.winsz]) * self.mbase
         self.rh *= self.base
         self.rh += ord(self.text[self.pos])
@@ -47,10 +50,10 @@ class RollingHash(object):
         self.pos += 1
 
     def end(self):
-        return self.pos >= len(self.text)
+        return self.pos > len(self.text)
 
     def hash(self):
         return self.rh
 
     def window(self):
-        return self.text[self.pos-self.winsz : self.pos]
+        return self.text[self.pos-self.winsz:self.pos]

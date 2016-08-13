@@ -8,6 +8,7 @@ Unit tests.
 
 from alg.hash import Dict
 from alg.hash import rabin_karp
+from alg.hash import BloomFilter
 
 
 def test_dict():
@@ -31,3 +32,17 @@ def test_dict():
 
 def test_rabin_karp():
     assert rabin_karp('aa', 'aaaa aabb abcc fdixsda') == [0, 1, 2, 5]
+    assert rabin_karp('a', 'a') == [0]
+
+
+def test_bf():
+    bf = BloomFilter()
+    bf.add('a')
+    bf.add(1)
+    bf.add(1234321)
+    bf.add('xyz')
+    # bf can give fp, so only check contains
+    assert 'a' in bf
+    assert 1 in bf
+    assert 1234321 in bf
+    assert 'xyz' in bf

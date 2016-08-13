@@ -88,7 +88,7 @@ def _find_kth(a, p, q, k, pivot_idx):
 
 def find_kth(a, k, pivot):
     """
-    Find kth smalles in a
+    Find kth smallest in a
     :param a:
     :param k:
     :param pivot: either 'random' or 'median'

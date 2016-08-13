@@ -7,3 +7,4 @@ All rights reserved.
 
 from dict import Dict
 from string import rabin_karp
+from bf import BloomFilter
