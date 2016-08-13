@@ -593,7 +593,8 @@
 \item Cyclic detection (DFS): find back edges.
   \begin{itemize}
   \item Back edge: Edge($v_2 \rightarrow v_1$), $v_1$ is ascendant.
-  \item $v_1$ is ascendant of $v_2$ if $(t_1^{in}, t_1^{out}) \supset (t_2^{in}, t_2^{out})$
+  \item $v_1$ is ascendant of $v_2$ if $(t_1^{in}, t_1^{out}) \supset (t_2^{in}, t_2^{out})$.
+  \item Practically we also need to check if $v_1$ and $v_2$ have the same root. It is possible that we first DFS $v_1$, and then $v_2$.
   \end{itemize}
 \item Topological sort (DFS):
   \begin{itemize}

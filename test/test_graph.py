@@ -42,6 +42,22 @@ def test_traverse():
     assert not g.sptree().cyclic()
 
 
+def test_cyclic():
+    g = Graph()
+    g.add_edge(Edge(1, 3))
+    g.add_edge(Edge(2, 1))
+    assert not g.cyclic()
+    g.add_edge(Edge(3, 2))
+    assert g.cyclic()
+
+
+def test_topological():
+    g = Graph()
+    g.add_edge(Edge(1, 3))
+    g.add_edge(Edge(2, 1))
+    assert g.topological() == [2, 1, 3]
+
+
 def test_sssp():
     # sssp = single source shortest path
     # CLRS(2009) p659

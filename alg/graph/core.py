@@ -144,7 +144,7 @@ class Graph(object):
         """
         self.reset_intermediates()
         for start in self.V.itervalues():
-            if not start.level:
+            if start.level is None:
                 if order == self.ORDER_BFS:
                     start.root = start
                     start.level = 0
@@ -224,7 +224,7 @@ class Graph(object):
         edges = self.E[start]
         for edge in edges:
             new = edge.end
-            if not new.level:
+            if new.level is None:
                 if func_edge:
                     func_edge(edge)
                 new.root = start.root
