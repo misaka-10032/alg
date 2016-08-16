@@ -9,3 +9,5 @@ Package for trees.
 from core import BsTree, BinNode
 from avl import AvlTree, AvlNode
 from rb import RbTree, RbNode
+from bit import BITree
+from seg import SegTree

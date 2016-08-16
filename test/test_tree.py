@@ -8,8 +8,8 @@ Test cases for tree package. Uses nose2.
 
 import numpy as np
 from alg.tree import rb
-from alg.tree import BsTree, AvlTree, RbTree
-
+from alg.tree import BsTree, AvlTree, RbTree, \
+                     BITree, SegTree
 
 def _test_bst_node(node):
     left = node.left
@@ -95,3 +95,29 @@ def test_rb():
     """ test rb property """
     assert tree.root.color == rb.BLACK
     tree.traverse(order=tree.ORDER_POST, func=_test_rb_node)
+
+
+def test_bit():
+    for _ in xrange(100):
+        sz = 100
+        a = np.random.randint(-100, 100, sz)
+        tree = BITree(a)
+        for _ in xrange(100):
+            i, j, k = np.random.choice(sz, 3, replace=False)
+            i, j = sorted([i, j])
+            assert tree.interval_sum(i, j) == np.sum(a[i:j+1])
+            next = np.random.randint(-100, 100)
+            a[k] = tree[k] = next
+
+
+def test_seg():
+    for _ in xrange(100):
+        sz = 100
+        a = np.random.randint(-100, 100, sz)
+        tree = SegTree(a.tolist(), op='min')
+        for _ in xrange(100):
+            i, j, k = np.random.choice(sz, 3, replace=False)
+            i, j = sorted([i, j])
+            assert tree.range_query(i, j) == np.min(a[i:j+1])
+            next = np.random.randint(-100, 100)
+            a[k] = tree[k] = next
