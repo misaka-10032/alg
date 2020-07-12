@@ -1,12 +1,16 @@
 # Binary Indexed Tree
 
-* Able to
- * Answer sum query within interval.
- * Update within fixed-size array.
-* Variant
- * Answer prefix query of min/max.
+A binary indexed tree is a data structure built on top of a fixed-length array `a[n]` that is able to
+
+* Answer statistical queries (sum, min, max, etc.) within a range in `O(log n)`.
+* Update an element in `O(log n)`.
+* Initialize in `O(n)`.
+
+For simplicity, we only include the implementation for sum queries. The implementation for min / max queries is move involved, because it requires two binary indexed trees.
 
 ## Example
+
+Underneath is an example. A node is represented by its index.
 
 ```
    _____ 0 _________________________
@@ -22,56 +26,70 @@
 
 ## Tree structure
 
-* Each node takes index as key.
-* `i`th level contains indices with `i` bits, e.g.
- * First layer has 1(1), 2(10), 4(100), 8(1000).
- * Second layer has 3(11), 5(101), 6(110), 9(1001), 10(1010).
- * Third layer has 7(111), 11(1011).
-* Partial prefix sums are computed and stored in nodes.
+* Each node is keyed by its index.
+* The `i`th level contains the indices with `i` bits, e.g.
+  * The first layer has `1(1)`, `2(10)`, `4(100)`, `8(1000)`.
+  * The second layer has `3(11)`, `5(101)`, `6(110)`, `9(1001)`, `10(1010)`.
+  * The third layer has `7(111)`, `11(1011)`.
+* Each node also stores the sum ranged from its parent index (inclusive) to itself (exclusive).
+  * For example, `6` has parent `4`, so the node `6` stores `sum(a[4:6])`.
 
-## Range of node
+## Compute the prefix sum
 
-* Prefix sums does NOT all start from `i=0`
-* For a current node `c` and its parent `p`, it computes sum within `[p, c)`
-* For example, `7` has parent `4`, so this node stores sum within `[4, 7)`
+* We start with the leaf node and sum up until the root node, e.g.
 
-## Compute prefix sum
+```
+sum(a[4:7]) = sum(a[6:7]) + sum(a[4:6]) + sum(a[0:4])
+```
 
-* Find the leaf node and sum up till root
-* e.g. To compute `[0, 7)`
- * Sum up node 7, 4, 0.
- * Rationale is that [0, 7) = [000, 100) + [100, 110) + [110, 111)
+## Compute the range sum
 
-## Find parent
+A range sum can be computed by two prefix sums.
 
-* Easy way to tell parent is to flip the right most 1, e.g.
- * `11 = (1011)_2  -->  (1010)_2 = 10`
- * `10 = (1010)_2  -->  (1000)_2 = 8`
-* Here's a quicker way to find parent
- * `x - (x & -x)`
- * As we know `-x` is `~x+1`
- * `&`ing that with original will only remain the rightmost `1`.
+```
+sum(a[start:end]) = sum(a[:end]) - (sum(a[:start-1]) if start > 0 else 0)
+```
 
-## Update value
+## Find the parent
 
-* When value of some index is updated, multiple nodes need to be updated.
-* Find the leaf interval and the other intervals that contains this interval.
- * Only two levels are affected.
- * One is the current level, all the right siblings are affected.
- * The other one is the first level, all the stems on the right are affected.
-* e.g. When 8 is updated,
- * The leaf interval is like `[?, 1001)`, so node 9 is first found.
- * It's right sibling includes `1010 [8, 10)`, `1100 [8, 12)`.
- * It's right ancestors includes `10000 [0, 16)`, `100000 [0, 32)`, ...
+An easy way to tell the parent is to flip the rightmost 1, e.g.
 
-## Find next
+* `11 = (1011)_2  -->  (1010)_2 = 10`
+* `10 = (1010)_2  -->  (1000)_2 = 8`
 
-* Easy way to find next is to add the right most 1, e.g.
- * `1001 + 0001 = 1010` (next sibling)
- * `1010 + 0010 = 1100` (next sibling)
- * `1100 + 0100 = 10000` (next ancestor)
+Here's a trick to flip the rightmost 1.
 
-## Initialize
+* `x - (x & -x)`
+* As we know `-x` is `~x+1`
+* `&`ing that with original will only remain the rightmost `1`.
 
-* Init the array of the same size with all 0's, whose BIT is also all zeros.
-* Update values one by one.
+## Update a value
+
+When the value of some index is updated, two types of nodes are affected:
+
+* Its child nodes.
+* The elder siblings of its non-root ancester.
+
+For example, when `12(1100)` is updated, its child nodes include
+
+* `13(1101)`, which contains `sum(a[12:13])`.
+* `14(1110)`, which contains `sum(a[12:14])`.
+
+Its non-root ancester `8(1000)` has the following elder siblings
+
+* `16(10000)`, which contains `sum(a[:16])`.
+* `32(100000)`, which contains `sum(a[:32])`.
+
+These two types of nodes can be iterated with a bit operation:
+
+* Add the rightmost 1 to the current index.
+
+For example, we start with the first child `13(1101)` of `12(1100)`. We will iterate the following:
+
+* `13(1101) + 1(0001) = 14(1110)`  (next sibling)
+* `14(1110) + 2(0010) = 16(10000)` (next ancestor)
+* `16(10000) + 16(10000) = 32(100000)` (next ancestor)
+
+## Initialization
+
+The prefix sum can be computed in `O(n)`. The sum on each node can be computed with the prefix sum in `O(1)`.
