@@ -2,3 +2,6 @@
 !.gitignore
 
 TSWLatexianTemp_*
+*.aux
+*.log
+*.synctex.gz

@@ -163,6 +163,10 @@
     \includegraphics[width=0.3\textwidth]{assets/bst-succ}
     \end{figure}
   \item pred [$O(h)$]
+    \begin{itemize}
+    \item Case 1: has left child.
+    \item Case 2: doesn't have left child.
+    \end{itemize}
     \begin{figure}[H]
     \centering
     \includegraphics[width=0.3\textwidth]{assets/bst-pred}
@@ -621,12 +625,16 @@
   \end{itemize}
 \item Dynamic programming
   \begin{itemize}
-  \item $S$ is safe set, within which have been reached by shortest path from source.
+  \item $S$ is the safe set, within which are the nodes that have been reached with shortest path from the source.
   \item $R$ is the remaining set.
   \end{itemize}
-\item Optimize
+\item Optimizaiton
   \begin{itemize}
   \item Maintain $d$ as priority queue, so that each time \textit{EXTRACT-MIN} only takes $O(\log|V|)$
+    \begin{itemize}
+    \item This requires an update of the heap element, which could be achieved by a $sift\_down()$ and a $bubble\_up()$ of the updated element.
+    \item Alternatively, we can simply push the new element, and check if element is outdated when we pop an element from the queue. The element is fresh if it does not exist in the safe set yet.
+    \end{itemize}
   \item Total complexity: $O(|E|+|V|\log|V|)$
   \end{itemize}
 \item Single source single destination
