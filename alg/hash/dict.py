@@ -11,8 +11,8 @@ from core import MulHash
 
 
 class DictNode(Node):
-    def __init__(self, key, value):
-        super(DictNode, self).__init__(key, value)
+    def __init__(self, key, val):
+        super(DictNode, self).__init__(key, val)
         self.next = None
 
 
@@ -51,7 +51,7 @@ class Dict(object):
 
     def get(self, key):
         _, _, node = self._lookup(key)
-        return node.value if node else None
+        return node.val if node else None
 
     def __getitem__(self, item):
         return self.get(item)
@@ -81,15 +81,15 @@ class Dict(object):
         if extend and alpha > self.alpha:
             self._resize(self.m * 2)
 
-    def put(self, key, value):
+    def put(self, key, val):
         idx, _, node = self._lookup(key)
         if node:
-            node.value = value
+            node.val = val
         else:
-            self._insert(idx, DictNode(key, value))
+            self._insert(idx, DictNode(key, val))
 
-    def __setitem__(self, key, value):
-        self.put(key, value)
+    def __setitem__(self, key, val):
+        self.put(key, val)
 
     def pop(self, key):
         idx, prev, node = self._lookup(key)
@@ -104,4 +104,4 @@ class Dict(object):
         alpha = float(self.n) / self.m
         if self.m >= self.init_m * 2 and alpha < self.alpha / 4:
             self._resize(self.m / 2)
-        return node.value
+        return node.val

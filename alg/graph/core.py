@@ -13,8 +13,8 @@ from ..heap import MinHeap
 
 
 class Vertex(Node):
-    def __init__(self, key, value=None):
-        super(Vertex, self).__init__(key, value)
+    def __init__(self, key, val=None):
+        super(Vertex, self).__init__(key, val)
         self.root = None
         self.level = None
         self.tin = None
@@ -305,7 +305,7 @@ class Graph(object):
         hnodes = {v: Node(d[v], v) for v in self.V.keys()}
         R = MinHeap(hnodes.values(), modifiable=True)
         while R:
-            u = R.pop().value
+            u = R.pop().val
             S.add(u)
             for e in self.E[u]:
                 if self._relax(d, p, e):

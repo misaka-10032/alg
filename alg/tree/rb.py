@@ -22,9 +22,9 @@ class NilNode(BinNode):
 
 
 class RbNode(BinNode):
-    def __init__(self, key=None, value=None, color=RED,
+    def __init__(self, key=None, val=None, color=RED,
                  left=None, right=None, parent=None):
-        super(RbNode, self).__init__(key, value, left, right, parent)
+        super(RbNode, self).__init__(key, val, left, right, parent)
         self.color = color
         if left is None:
             self.left = NilNode(self)
@@ -94,8 +94,8 @@ class RbTree(BsTree):
 
         return node
 
-    def __setitem__(self, key, value):
-        self.insert(RbNode(key, value), update=True)
+    def __setitem__(self, key, val):
+        self.insert(RbNode(key, val), update=True)
 
     def _balance_remove(self, node):
         x = node

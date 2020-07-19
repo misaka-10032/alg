@@ -28,6 +28,7 @@ def _test_bst(tree):
     """ test insert """
     for x in a:
         tree.insert(x)
+        assert x in tree
     tree.traverse(order=tree.ORDER_IN, func=_test_bst_node)
     c = []
     t2l = lambda node: c.append(node.key)
@@ -38,6 +39,7 @@ def _test_bst(tree):
     for x in d:
         b.remove(x)
         tree.remove(x)
+        assert x not in tree
     c = []
     t2l = lambda node: c.append(node.key)
     tree.traverse(order=tree.ORDER_IN, func=t2l)

@@ -364,8 +364,8 @@
     \item $X_i$: indicates if split into $(i, n-i-1)$
     \item $T_i = T(\max \{i, n-i-1\}) + \Theta(n)$
     \item $T(n) = \sum X_i T_i$
-    \item $E[T(n)] = \sum_{i=0}^{n-1} T_i / n \le \frac{2}{n} \sum_{i=0}^{\lceil n/2 \rceil} T_i$
-    \item $E[T(n)] \le c\,n$ by mathematical induction.
+    \item $E[T(n)] = \sum_{i=0}^{n-1} T_i / n \le \Theta(n) + \frac{2}{n} \sum_{k=n/2}^{n} T(k)$
+    \item $E[T(n)] \le c\,n$ by mathematical induction: claim for $n$, prove for $n+1$.
     \end{itemize}
   \end{itemize}
 \item Median pivot
@@ -590,11 +590,12 @@
   \item Depth first search (DFS)
   \end{itemize}
 \item Min span tree (DFS/BFS): search and save edges.
-\item Cyclic detection (DFS): find back edges.
+\item Cycle detection (DFS): find back edges.
   \begin{itemize}
   \item Back edge: Edge($v_2 \rightarrow v_1$), $v_1$ is ascendant.
   \item $v_1$ is ascendant of $v_2$ if $(t_1^{in}, t_1^{out}) \supset (t_2^{in}, t_2^{out})$.
   \item Practically we also need to check if $v_1$ and $v_2$ have the same root. It is possible that we first DFS $v_1$, and then $v_2$.
+  \item In short, inside or disjoint is good (acyclic).
   \end{itemize}
 \item Topological sort (DFS):
   \begin{itemize}

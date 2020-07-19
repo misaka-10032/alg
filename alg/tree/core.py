@@ -4,15 +4,17 @@ Created by misaka-10032 (longqic@andrew.cmu.edu).
 All rights reserved.
 
 Base classes for trees.
+Many use `not node` rather than `node is not None` is because
+we want to support `NilNode`, though not None, still False.
 """
 
 from ..core import Node, print_node
 
 
 class BinNode(Node):
-    def __init__(self, key, value=None,
+    def __init__(self, key, val=None,
                  left=None, right=None, parent=None):
-        super(BinNode, self).__init__(key, value)
+        super(BinNode, self).__init__(key, val)
         self.left = left
         self.right = right
         self.parent = parent
@@ -141,7 +143,9 @@ class BsTree(BinTree):
         return self.max_at(start)
 
     def _search(self, start, key):
-        if not start or key == start.key:
+        if not start:
+            return None
+        if key == start.key:
             return start
         if key < start.key:
             return self._search(start.left, key)
@@ -153,9 +157,12 @@ class BsTree(BinTree):
         return self._search(start, key)
 
     def __getitem__(self, item):
-        return self.search(item).value
+        return self.search(item).val
 
-    def succ(self, node):
+    def __contains__(self, item):
+        return bool(self.search(item))
+
+    def next(self, node):
         if not isinstance(node, BinNode):
             node = self.search(node)
         if not node:
@@ -168,7 +175,7 @@ class BsTree(BinTree):
             parent = parent.parent
         return parent
 
-    def pred(self, node):
+    def prev(self, node):
         if not isinstance(node, BinNode):
             node = self.search(node)
         if not node:
@@ -269,7 +276,7 @@ class BsTree(BinTree):
         Insert a new node into the tree. N.B. don't attempt to insert a subtree.
         :param node: the new node to be inserted.
         :type node: BinNode
-        :param update: whether update the original value if key exists.
+        :param update: whether update the original val if key exists.
         :return: the inserted node.
         :rtype: BinNode
         """
@@ -307,7 +314,7 @@ class BsTree(BinTree):
             parent.right = node
         else:
             if update:
-                parent.value = node.value
+                parent.val = node.val
                 ret = None
             else:
                 raise KeyError("Duplicate key: %s" % node.key)
@@ -319,8 +326,8 @@ class BsTree(BinTree):
 
         return ret
 
-    def __setitem__(self, key, value):
-        self.insert(BinNode(key, value), update=True)
+    def __setitem__(self, key, val):
+        self.insert(BinNode(key, val), update=True)
 
     def _transplant(self, old, new, carry=True):
         """
@@ -423,3 +430,7 @@ class BsTree(BinTree):
             print '*' * 20
 
         return node
+
+    def pop(self, key):
+        node = self.remove(key)
+        return node.val

@@ -10,9 +10,9 @@ from core import (BsTree, BinNode)
 
 
 class AvlNode(BinNode):
-    def __init__(self, key=None, value=None,
+    def __init__(self, key=None, val=None,
                  left=None, right=None, parent=None):
-        super(AvlNode, self).__init__(key, value, left, right, parent)
+        super(AvlNode, self).__init__(key, val, left, right, parent)
         self.height = None
 
     def _pretty_str(self):
@@ -110,8 +110,8 @@ class AvlTree(BsTree):
 
         return node
 
-    def __setitem__(self, key, value):
-        self.insert(AvlNode(key, value), update=True)
+    def __setitem__(self, key, val):
+        self.insert(AvlNode(key, val), update=True)
 
     def remove(self, node, strategy='r'):
         """

@@ -8,16 +8,16 @@ Base classes.
 
 
 class Node(object):
-    def __init__(self, key, value=None):
+    def __init__(self, key, val=None):
         self.key = key
-        self.value = value
+        self.val = val
 
     def _pretty_str(self):
         return self.key
 
     def __repr__(self):
         return '%s\n\tkey: %s\n\tvalue: %s\n' % \
-               (super(Node, self).__repr__(), self.key, self.value)
+               (super(Node, self).__repr__(), self.key, self.val)
 
     def __cmp__(self, other):
         if isinstance(other, Node):
